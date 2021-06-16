@@ -52,12 +52,14 @@
     
     <form method="post" action="/url">
         <div class="mb-3" id="URL_div">
-          <input type="text" class="form-control" id="URL" placeholder="Enter the URL here">
+          <input type="text" class="form-control" name ="URL" id="URL" placeholder="Enter the URL here" value= <%= url %>>
         </div>
         <div id="button">
         <button type="submit" class="btn btn-dark">Convert</button>
         </div>
       </form>
+
+    <div><%= message %> </div>
 
     <div id="short_url_div">
       Here's your shortened url:
