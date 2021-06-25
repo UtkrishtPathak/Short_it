@@ -20,10 +20,11 @@
   "homepage": "https://github.com/UtkrishtPathak/Short_it#readme",
   "dependencies": {
     "axios": "^0.21.1",
+    "dotenv": "^10.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "mongoose": "^5.12.13",
-    "short-unique-id": "^4.3.3"
+    "nanoid": "^3.1.23"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

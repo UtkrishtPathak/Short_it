@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -42,7 +42,14 @@
         {
           text-align: center;
           padding-top: 20px;
+        }
+        .invisible
+        {
           display: none;
+        }
+        #message
+        {
+          text-align: center;
         }
   
     </style>
@@ -59,14 +66,46 @@
         </div>
       </form>
 
-    <div><%= message %> </div>
 
+    <div id="message">
+      <%= message %>
+    </div>
     <div id="short_url_div">
-      Here's your shortened url:
-      <div id="short_url"><a href="http://localhost:1000/">Link</a></div>
-      <button type="button" class="btn btn-warning btn-sm">Copy the URL</button>
+      <div id="short_url"><a href=<%= url_link %>><%= link %></a></div>
+      <button type="button" class="btn btn-warning btn-sm" onclick="copy()">Copy the URL</button>
     </div>
 
+    <% if(vision) { %>
+          <script>
+              document.getElementById("short_url_div").classList.add("invisible");      
+          </script>
+        <% } %>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script>
+      function copy() {
+        var elm = document.getElementById("short_url");
+        // for Internet Explorer
+
+        if(document.body.createTextRange) {
+          var range = document.body.createTextRange();
+          range.moveToElementText(elm);
+          range.select();
+          document.execCommand("Copy");
+          alert("The URL has been copied");
+        }
+        else if(window.getSelection) {
+          // other browsers
+
+          var selection = window.getSelection();
+          var range = document.createRange();
+          range.selectNodeContents(elm);
+          selection.removeAllRanges();
+          selection.addRange(range);
+          document.execCommand("Copy");
+          alert("The URL has been copied");
+        }
+      }
+    </script>
   </body>
 </html>
