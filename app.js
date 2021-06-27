@@ -12,7 +12,8 @@ var { nanoid }      = require("nanoid");
 
 
 //database connection
-mongoose.connect("mongodb://localhost:27017/Shortify", {
+mongoose.connect(process.env.DB_URL,
+{
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useFindAndModify: false,
@@ -33,20 +34,27 @@ app.use(express.urlencoded({extended: true}));
 app.set("view engine","ejs");
 
 
+app.use(express.static(__dirname + "/public"));
+
+//root
 app.get("/", (req,res) =>
 {
+    //ejs parameters
     m="";
     url ="";
-    n=process.env.HOME_URL;
+    n="";
     vis=true;
+
+    //rendering the page
     res.render("home",{message:m, url:url,vision:vis,url_link:n,link:"LINK"});
 });
 
+
+//url checking
 app.get("/:id", (req,res) =>
 {
-     short_url=process.env.HOME_URL+req.params.id;
-     console.log(short_url);
-     Url.find({new_uid:short_url}, (err,docs) => {
+    Url.find({_id:req.params.id}, (err,docs) =>
+    {
         if(docs.length)
         {
             var original = docs[0].orig_url;
@@ -56,51 +64,66 @@ app.get("/:id", (req,res) =>
         {
             res.sendStatus(404);
         }
-     });     
+    });     
 });
 
+//new url for shortening
 app.post("/url",async (req,res) => 
 {
-    const url = req.body.URL;
-    console.log(req.body.URL);
-    axios.get(url)
-    .then(function(response)
-    {
-        console.log("valid url");
-        Url.find({orig_url:url}, async (err,docs) => {
-            if(docs.length)
-            {
-                console.log(docs);
-                vis=false;
-                n=docs[0].new_uid;
-                console.log(n);
-                res.render("home",{url:url,message:message.existing_url,url_link:url,vision:vis,link:n});
-            }
-            else
-            {
-                var id=process.env.HOME_URL+nanoid(8);
-                var u = new Url({orig_url:url,new_uid:id});
-                
-                await u.save();
+    const url = req.body.URL;//original url retrieved from the body of the request
 
-                Url.find({orig_url:url},function(err,docs){
-                    console.log(docs);
-                    vis=false;
-                    n=docs[0].new_uid;
-                    res.render("home",{url:url,message:message.new_url,url_link:url,vision:vis,link:n}); 
-                });
-            }
-        })
-    })
-    .catch(function(error)
+    Url.find({orig_url:url}, async (err,docs) => 
     {
-        vis=true;
-        n=process.env.HOME_URL;
-        res.render("home",{url:url,message:message.wrong_url,url_link:n,vision:vis,link:"LINK"});
-    })
+        if(docs.length)
+        {
+            //ejs parameters
+            vis=false;
+            n=process.env.HOME_URL+docs[0]._id;
+            console.log(n);
+
+            //rendering the page
+            res.render("home",{url:url,message:message.existing_url,url_link:url,vision:vis,link:n});
+        }
+        else
+        {
+            //checking if the url is valid or not
+            axios.get(url)
+            .then( async (response) =>
+            {
+                console.log("valid url");
+                
+                //generating a unique id
+                var check=true;
+                var nid=nanoid(5);
+                while(check)
+                {
+                    var u = new Url({orig_url:url,_id:nid});
+                    await u.save().then(results => check=false); //checking if the id already exusts in the database or not
+                    nid=nanoid(5); //if it exists we generate a new id again 
+                }   
+                
+                //ejs parameters
+                vis=false;
+                n=process.env.HOME_URL+nid;
+                
+                //rendering the page
+                res.render("home",{url:url,message:message.new_url,url_link:url,vision:vis,link:n}); 
+            })
+            .catch(function(error) //if the url is not valid
+            {
+                //ejs parameters
+                vis=true;
+                n="";
+
+                //rendering the page
+                res.render("home",{url:url,message:message.wrong_url,url_link:n,vision:vis,link:"LINK"});
+            });
+        }
+    });    
 });
 
 
-app.listen(1000, function(){
+app.listen(1000, function()
+{
     console.log("Running on port 1000");
 });

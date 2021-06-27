@@ -1,0 +1,51 @@
+#URL
+{
+    width: 50%;
+    text-align: center;
+    margin: auto;
+    border-radius: 10px;
+}
+
+#URL_div
+{
+    margin-top:2cm;
+}
+
+body
+{
+    background-color:rgb(140, 208, 72);
+}
+
+#button
+{
+    text-align: center;
+}
+
+#header
+{
+    text-align: center;
+    background-color: gray;
+    padding-bottom: 15px;
+}
+
+#short_url_div
+{
+    text-align: center;
+    padding-top: 20px;
+}
+
+.invisible
+{
+    display: none;
+}
+
+#message
+{
+    text-align: center;
+}
+
+#bottom
+{
+    background-color: white;
+    text-align: center;
+}

@@ -10,7 +10,7 @@ const Schema = new mongoose.Schema(
             type: String,
             required: true
         },
-        new_uid:
+        _id:
         {
             type: String,
             required: true,
