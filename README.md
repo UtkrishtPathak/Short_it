@@ -10,11 +10,12 @@ If not, then a new short unique URL will be provided to you, which you can use f
 # Steps to use it in your local system
 1. Fork this repository and clone it to your local system.
 2. Make sure you have nodejs and mongodb installed in your system beforehand.
-3. Use the command `npm install` for installing the node modules in your command line.
-4. In place of `process.env.DB_URL` write `'mongodb://localhost:27017/myapp'`. This will make the mongodb connection of your app to myapp database in mongodb.
-5. Replace `process.env.HOME_URL` with `http://localhost:1000` everywhere.
-6. Start the mongodb server using the command `mongodb` in the command line.
-7. Write the command `npm run start` to start the server on port 1000. Make sure you are in the directory of the cloned repository before writing this command.
+3. Use the command `npm install` for installing the node modules in your command line. Move to the cloned directory in your terminal beforehand.
+4. Open app.js in your code editor.
+5. In place of `process.env.DB_URL` write `"mongodb://localhost:27017/myapp"`. This will make the mongodb connection of your app to myapp database in mongodb.
+6. Replace `process.env.HOME_URL` with `"http://localhost:1000"` everywhere.
+7. Start the mongodb server using the command `mongodb` in the command line.
+8. Write the command `npm run start` to start the server on port 1000. Make sure you are in the directory of the cloned repository before writing this command.
 
 Enjoy!!!
 
