@@ -14,7 +14,7 @@ If not, then a new short unique URL will be provided to you, which you can use f
 4. Open app.js in your code editor.
 5. In place of `process.env.DB_URL` write `"mongodb://localhost:27017/myapp"`. This will make the mongodb connection of your app to myapp database in mongodb.
 6. Replace `process.env.HOME_URL` with `"http://localhost:1000"` everywhere.
-7. Start the mongodb server using the command `mongodb` in the command line.
+7. Start the mongodb server using the command `mongod` in the command line.
 8. Write the command `npm run start` to start the server on port 1000 in command line. Make sure you are in the directory of the cloned repository before writing this command.
 
 Enjoy!!!
