@@ -7,7 +7,7 @@ You just have to visit the website and enter the URL you want to shorten.
 If there already exists a short version of the requested URL, you will be provided that short URL.
 If not, then a new short unique URL will be provided to you, which you can use for sharing.
 
-#Steps to use it in your local system
+# Steps to use it in your local system
 1. Fork this repository and clone it to your local system.
 2. Make sure you have nodejs and mongodb installed in your system beforehand.
 3. Use the command `npm install` for installing the node modules in your command line.
