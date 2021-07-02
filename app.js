@@ -6,6 +6,7 @@ const express       = require("express"),
       mongoose      = require("mongoose"),
       Url           = require ("./schema/url.js"),
       axios         = require("axios"),
+      cron          = require("node-cron"),
       message       = require("./message.js");
 var { nanoid }      = require("nanoid");
 
@@ -39,40 +40,57 @@ app.use(express.static(__dirname + "/public"));
 //root
 app.get("/", (req,res) =>
 {
-    //ejs parameters
-    m="";
-    url ="";
-    n="";
-    vis=true;
-
+    //ejs parameters for home page
+    var m = "";
+    var url = "";
+    var n = "";
+    var vis = true;
+    
     //rendering the page
-    res.render("home",{message:m, url:url,vision:vis,url_link:n,link:"LINK"});
+    res.render("home",{message:m,url:url,vision:vis,url_link:n,link:"LINK"});
 });
 
-
 //url checking
-app.get("/:id", (req,res) =>
-{
-    Url.find({_id:req.params.id}, (err,docs) =>
+app.get("/:id",async (req,res) =>
+{   
+    Url.find({_id:req.params.id},function(err,docs)
     {
+        console.log(docs);
         if(docs.length)
         {
-            var original = docs[0].orig_url;
-            res.redirect(original);
+            var original = "https://"+docs[0].orig_url;
+            res.redirect(original)
         }
         else
         {
             res.sendStatus(404);
         }
-    });     
+    });
 });
 
 //new url for shortening
 app.post("/url",async (req,res) => 
 {
-    const url = req.body.URL;//original url retrieved from the body of the request
+    var url = req.body.URL;//original url retrieved from the body of the request
+    
+    //formatting the url
+    var check = url.substr(0,5);
+    var dom;
+    if(check=="http:")
+        dom=url.substr(7);
+    else if(check=="https")
+        dom=url.substr(8);
+    
+    if(check!="http:"&&check!="https")
+       {
+        dom = url; 
+        url = "https://" + url;
+       } 
+    console.log(url);
+    console.log(dom);
 
-    Url.find({orig_url:url}, async (err,docs) => 
+    //checking if a short version for the url exists in the database
+    Url.find({orig_url:dom}, async (err,docs) => 
     {
         if(docs.length)
         {
@@ -94,17 +112,19 @@ app.post("/url",async (req,res) =>
                 
                 //generating a unique id
                 var check=true;
-                var nid=nanoid(5);
+                var i=nanoid(5);
+                var nid=i;
                 while(check)
                 {
-                    var u = new Url({orig_url:url,_id:nid});
-                    await u.save().then(results => check=false); //checking if the id already exusts in the database or not
-                    nid=nanoid(5); //if it exists we generate a new id again 
+                    i=nid;
+                    var u = new Url({orig_url:dom,_id:i});
+                    await u.save().then(results => check=false); //saving and checking if the id already exists in the database or not
+                    nid=nanoid(5); //if it exists a new id is generated again 
                 }   
                 
                 //ejs parameters
                 vis=false;
-                n=process.env.HOME_URL+nid;
+                n=process.env.HOME_URL+i;
                 
                 //rendering the page
                 res.render("home",{url:url,message:message.new_url,url_link:url,vision:vis,link:n}); 
@@ -114,7 +134,6 @@ app.post("/url",async (req,res) =>
                 //ejs parameters
                 vis=true;
                 n="";
-
                 //rendering the page
                 res.render("home",{url:url,message:message.wrong_url,url_link:n,vision:vis,link:"LINK"});
             });
@@ -122,8 +141,20 @@ app.post("/url",async (req,res) =>
     });    
 });
 
+//Keeping the bot alive
+cron.schedule("0 */3 * * * *", () => {
+    axios.get("https://cowinwatch.herokuapp.com/")
+    .then(function(response){
+        console.log("Keeping the bot alive");
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+})
 
-app.listen(1000, function()
+//starting the app
+const port = process.env.PORT||1000;
+app.listen(port, function()
 {
-    console.log("Running on port 1000");
+    console.log("Running on port "+port);
 });
