@@ -143,7 +143,7 @@ app.post("/url",async (req,res) =>
 
 //Keeping the bot alive
 cron.schedule("0 */3 * * * *", () => {
-    axios.get("https://cowinwatch.herokuapp.com/")
+    axios.get("https://shtf.me/")
     .then(function(response){
         console.log("Keeping the bot alive");
     })
